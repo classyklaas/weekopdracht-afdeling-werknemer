@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+
+        function werknemerEnSalarisToevoegen() {
+            var obj = {};
+            obj.name = document.getElementById("deNaam").value;
+            obj.salary = document.getElementById("salaris").value;
+            objJSON = JSON.stringify(obj);
+            var werknemerEnSalarisToevoegen = new XMLHttpRequest();
+            werknemerEnSalarisToevoegen.onreadystatechange = function () {
+                console.log("De functie 'werknemerEnSalarisToevoegen' werkt!");
+            }
+            werknemerEnSalarisToevoegen.open("POST", "http://localhost:8082/employee/add", true);
+            werknemerEnSalarisToevoegen.setRequestHeader("Content-type", "application/json")
+            werknemerEnSalarisToevoegen.send(objJSON);
+        }
+
+        function salarisVeranderen() {
+            var xhr = new XMLHttpRequest();
+            var id = document.getElementById("IDwerknemer").value
+            var obj = {};
+            obj.salary = document.getElementById("nieuwSalaris").value;
+            objJSON = JSON.stringify(obj);
+            xhr.onreadystatechange = function () {
+                console.log("De functie 'salarisVeranderen' werkt!")
+            }
+            xhr.open("PUT", "http://localhost:8082/employee/update/" + id, true);
+            xhr.setRequestHeader("Content-type", "application/json")
+            xhr.send(objJSON);
+        }
+
+        function werknemerVerwijderen() {
+            var werknemerVerwijderen = new XMLHttpRequest();
+            var id = document.getElementById("werknemerVerwijderen").value;
+
+            werknemerVerwijderen.onreadystatechange = function () {
+                console.log("De functie 'werknemerVerwijderen' werkt!");
+            }
+            werknemerVerwijderen.open("DELETE", "http://localhost:8082/employee/delete/" + id, true);
+            werknemerVerwijderen.send();
+        }
+
+        function overzichtWerknemers() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+
+                if (this.readyState == 4) {
+
+                    var inhoudDB = JSON.parse(this.responseText);
+                    var employeestring = "";
+
+                    for (var x = 0; x < inhoudDB.length; x++) {
+                        try {
+                            employeestring +=
+                                ` 
+                            <div>
+                            <h3>Name = ${inhoudDB[x].name} </h3>
+                            <p>ID = ${inhoudDB[x].id} </p>
+                            <p>Salaris = ${inhoudDB[x].salary}</p>
+                            </div>
+                            `
+
+                        } catch (err) {
+
+                            employeestring +=
+                                ` 
+                            <div>
+                            <h3>Name = ${inhoudDB[x].name} </h3>
+                            <p>ID = ${inhoudDB[x].id} </p>
+                            <p>Salaris = ${inhoudDB[x].salary}</p>
+                            </div>
+                            `
+                        }
+                    }
+                    document.getElementById("divLijstWerknemers").innerHTML = employeestring;
+                }
+            }
+            xhr.open("GET", "http://localhost:8082/employee/all", true);
+            xhr.send();
+        }
+
+        function afdelingToevoegen() {
+            var obj = {};
+            obj.naam = document.getElementById("afdelingToevoegen").value;
+            objJSON = JSON.stringify(obj);
+            var afdelingToevoegen = new XMLHttpRequest();
+            afdelingToevoegen.onreadystatechange = function () {
+                console.log("De functie 'afdelingToevoegen' werkt!");
+            }
+            afdelingToevoegen.open("POST", "http://localhost:8082/api/afdeling/new", true);
+            afdelingToevoegen.setRequestHeader("Content-Type", "application/json");
+            afdelingToevoegen.send(objJSON);
+        }
+
+        function overzichtAfdelingen() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+
+                if (this.readyState == 4) {
+
+                    var inhoudDB = JSON.parse(this.responseText);
+                    var afdeling = "";
+
+                    for (var x = 0; x < inhoudDB.length; x++) {
+                        try {
+                            afdeling +=
+                                ` 
+                            <div>
+                            <h3>Name = ${inhoudDB[x].naam} </h3>
+                            <p>ID = ${inhoudDB[x].id} </p>
+                            <p>Aantal werknemers = ${inhoudDB[x].aantalMedewerkers} </p>
+                            </div>
+                            `
+
+                        } catch (err) {
+
+                            afdeling +=
+                                ` 
+                            <div>
+                            <h3>Name = ${inhoudDB[x].naam} </h3>
+                            <p>ID = ${inhoudDB[x].id} </p>
+                            </div>
+                            `
+                        }
+                    }
+                    document.getElementById("divLijstAfdelingen").innerHTML = afdeling;
+                }
+            }
+            xhr.open("GET", "http://localhost:8082/api/afdeling/all", true);
+            xhr.send();
+        }
+
+        function afdelingVerwijderen() {
+            var afdelingVerwijderen = new XMLHttpRequest();
+            var id = document.getElementById("afdelingVerwijderen").value;
+
+            afdelingVerwijderen.onreadystatechange = function () {
+                console.log("De functie 'afdelingVerwijderen' werkt!");
+            }
+            afdelingVerwijderen.open("DELETE", "http://localhost:8082/api/afdeling/delete/" + id, true);
+            afdelingVerwijderen.send();
+        }
+
+        function werknemerToewijzenAanAfdeling() {
+            var werknemerToewijzenAanAfdeling = new XMLHttpRequest();
+            var IDwerknemer = document.getElementById("IDwerknemer2").value;
+            var IDafdeling = document.getElementById("IDafdeling").value;
+            
+            werknemerToewijzenAanAfdeling.onreadystatechange = function () {
+                console.log("De functie 'werknemerToewijzenAanAfdeling' werkt!");
+            }
+            werknemerToewijzenAanAfdeling.open("PUT", "http://localhost:8082/api/afdeling/addemployee/" + IDafdeling + "/" + IDwerknemer, true);
+            werknemerToewijzenAanAfdeling.send();
+        }
+
+    </script>
+</head>
+
+<body>
+
+    <input type=button onclick=overzichtWerknemers() value="Lijst met werknemers tonen/updaten">
+
+    <div id="divLijstWerknemers">
+
+    </div>
+
+    <hr>
+
+    <input type=text style="width: 200px" id=deNaam placeholder="Naam nieuwe werknemer">
+
+    <input type=text style="width: 200px" id=salaris placeholder="Salaris werknemer">
+
+    <input type=button onclick=werknemerEnSalarisToevoegen() value="Werknemer toevoegen">
+
+    <hr>
+
+    <input type=text style="width: 200px" id=IDwerknemer1 placeholder="ID van deze werknemer">
+
+    <input type=text style="width: 200px" id=nieuwSalaris placeholder="Nieuw salaris werknemer">
+
+    <input type=button onclick=salarisVeranderen() value="Verander salaris werknemer">
+
+    <hr>
+
+    <input type=text style="width: 200px" id=werknemerVerwijderen placeholder="ID te verwijderen werknemer">
+
+    <input type=button onclick=werknemerVerwijderen() value="Werknemer verwijderen">
+
+    <hr>
+
+    <input type=button onclick=overzichtAfdelingen() value="Lijst met afdelingen tonen/updaten">
+
+    <div id="divLijstAfdelingen">
+
+    </div>
+
+    <hr>
+
+    <input type=text style="width: 200px" id=IDwerknemer2 placeholder="ID werknemer">
+
+    <input type=text style="width: 200px" id=IDafdeling placeholder="ID afdeling">
+
+    <input type=button onclick=werknemerToewijzenAanAfdeling() value="Werknemer toevoegen aan afdeling">
+
+    <hr>
+
+    <input type=text style="width: 200px" id=afdelingToevoegen placeholder="Naam nieuwe afdeling">
+
+    <input type=button onclick=afdelingToevoegen() value="Afdeling toevoegen">
+
+    <hr>
+
+    <input type=text style="width: 200px" id=afdelingVerwijderen placeholder="ID te verwijderen afdeling">
+
+    <input type=button onclick=afdelingVerwijderen() value="Afdeling verwijderen">
+
+</body>
+
+</html>
